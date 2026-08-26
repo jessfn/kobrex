@@ -1,19 +1,19 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
 import { deleteProjectAction } from "@/lib/actions/projects";
-import { Button } from "@/components/ui";
 
 export function DeleteProjectButton({ id }: { id: string }) {
   return (
-    <Button
+    <button
       type="button"
-      variant="danger"
-      className="px-3 py-1.5 text-xs"
+      aria-label="Eliminar proyecto"
       onClick={() => {
         if (confirm("¿Eliminar este proyecto?")) deleteProjectAction(id);
       }}
+      className="inline-flex items-center justify-center rounded-md p-1.5 text-[var(--color-text-muted)] transition-colors duration-150 hover:bg-red-50 hover:text-brand-700"
     >
-      Eliminar
-    </Button>
+      <Trash2 size={15} strokeWidth={1.75} />
+    </button>
   );
 }

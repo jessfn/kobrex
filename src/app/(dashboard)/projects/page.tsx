@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Badge, Button, Card } from "@/components/ui";
@@ -29,25 +30,28 @@ export default async function ProjectsPage() {
   return (
     <div>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-3xl font-black tracking-tight text-brand-800">Proyectos</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Proyectos</h1>
         <Link href="/projects/new">
-          <Button>+ Nuevo proyecto</Button>
+          <Button>
+            <Plus size={15} strokeWidth={2} />
+            Nuevo proyecto
+          </Button>
         </Link>
       </div>
 
       {projects.length === 0 ? (
-        <Card className="text-center text-brand-700">Aún no tienes proyectos.</Card>
+        <Card className="text-center text-[var(--color-text-muted)]">Aún no tienes proyectos.</Card>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
-            <Card key={p.id} className="flex flex-col gap-2">
+            <Card key={p.id} className="flex flex-col gap-1.5">
               <div className="flex items-start justify-between gap-2">
-                <h3 className="text-lg font-extrabold text-brand-900">{p.name}</h3>
+                <h3 className="font-medium">{p.name}</h3>
                 <Badge tone={statusTone[p.status]}>{statusLabel[p.status]}</Badge>
               </div>
-              <p className="text-sm font-semibold text-brand-600">{p.client.name}</p>
+              <p className="text-sm text-[var(--color-text-muted)]">{p.client.name}</p>
               {p.amount && (
-                <p className="text-sm text-brand-700">
+                <p className="text-sm font-medium">
                   ${Number(p.amount).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
                 </p>
               )}

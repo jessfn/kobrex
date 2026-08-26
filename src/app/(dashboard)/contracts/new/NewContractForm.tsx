@@ -3,7 +3,7 @@
 import { useActionState, useMemo, useState } from "react";
 import Link from "next/link";
 import { createContractAction, type ActionResult } from "@/lib/actions/contracts";
-import { Button, Card, ErrorText, Input, Label, Textarea } from "@/components/ui";
+import { Button, Card, ErrorText, Input, Label, Select, Textarea } from "@/components/ui";
 
 export function NewContractForm({
   clients,
@@ -37,9 +37,9 @@ export function NewContractForm({
 
   if (clients.length === 0) {
     return (
-      <Card className="text-center text-brand-700">
+      <Card className="text-center text-[var(--color-text-muted)]">
         Necesitas al menos un cliente antes de crear un contrato.{" "}
-        <Link href="/clients/new" className="underline font-bold">
+        <Link href="/clients/new" className="font-medium text-brand-700 underline underline-offset-2">
           Crear cliente
         </Link>
       </Card>
@@ -56,38 +56,26 @@ export function NewContractForm({
 
         <div>
           <Label htmlFor="clientId">Cliente *</Label>
-          <select
-            id="clientId"
-            name="clientId"
-            required
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
-            className="w-full rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-base outline-none focus:border-brand-500"
-          >
+          <Select id="clientId" name="clientId" required value={clientId} onChange={(e) => setClientId(e.target.value)}>
             {clients.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {filteredProjects.length > 0 && (
           <div>
             <Label htmlFor="projectId">Proyecto (opcional)</Label>
-            <select
-              id="projectId"
-              name="projectId"
-              defaultValue=""
-              className="w-full rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-base outline-none focus:border-brand-500"
-            >
+            <Select id="projectId" name="projectId" defaultValue="">
               <option value="">Sin proyecto</option>
               {filteredProjects.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         )}
 
@@ -113,7 +101,7 @@ export function NewContractForm({
         <div>
           <Label htmlFor="content">Contenido del contrato *</Label>
           <Textarea id="content" name="content" rows={12} value={content} readOnly className="font-mono text-xs" />
-          <p className="mt-1 text-xs text-brand-600">
+          <p className="mt-1.5 text-xs text-[var(--color-text-muted)]">
             Se genera automáticamente con las variables de arriba. Puedes editarlo manualmente después de crearlo.
           </p>
         </div>

@@ -9,7 +9,7 @@ export default function NewClientPage() {
 
   return (
     <div className="mx-auto max-w-xl">
-      <h1 className="mb-6 text-3xl font-black tracking-tight text-brand-800">Nuevo cliente</h1>
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Nuevo cliente</h1>
       <Card>
         <form action={formAction} className="space-y-4">
           <div>

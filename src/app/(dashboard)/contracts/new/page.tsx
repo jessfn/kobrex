@@ -14,7 +14,7 @@ export default async function NewContractPage() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="mb-6 text-3xl font-black tracking-tight text-brand-800">Nuevo contrato</h1>
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Nuevo contrato</h1>
       <NewContractForm
         clients={clients.map((c) => ({ id: c.id, name: c.name }))}
         projects={projects.map((p) => ({ id: p.id, name: p.name, clientId: p.clientId }))}

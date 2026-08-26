@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Plus, FileText } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Button, Card } from "@/components/ui";
@@ -15,26 +16,30 @@ export default async function ContractsPage() {
   return (
     <div>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-3xl font-black tracking-tight text-brand-800">Contratos</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Contratos</h1>
         <Link href="/contracts/new">
-          <Button>+ Nuevo contrato</Button>
+          <Button>
+            <Plus size={15} strokeWidth={2} />
+            Nuevo contrato
+          </Button>
         </Link>
       </div>
 
       {contracts.length === 0 ? (
-        <Card className="text-center text-brand-700">Aún no tienes contratos.</Card>
+        <Card className="text-center text-[var(--color-text-muted)]">Aún no tienes contratos.</Card>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {contracts.map((c) => (
-            <Card key={c.id} className="flex flex-col gap-2">
-              <h3 className="text-lg font-extrabold text-brand-900">{c.title}</h3>
-              <p className="text-sm font-semibold text-brand-600">{c.client.name}</p>
+            <Card key={c.id} className="flex flex-col gap-1.5">
+              <h3 className="font-medium">{c.title}</h3>
+              <p className="text-sm text-[var(--color-text-muted)]">{c.client.name}</p>
               <div className="mt-3 flex justify-end gap-2">
                 <Link
                   href={`/api/contracts/${c.id}/pdf`}
                   target="_blank"
-                  className="rounded-lg border-2 border-brand-300 px-3 py-1.5 text-xs font-bold text-brand-700 hover:bg-brand-50"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-border-strong)] px-3 py-1.5 text-xs font-medium transition-colors duration-150 hover:bg-[var(--color-surface-muted)]"
                 >
+                  <FileText size={13} strokeWidth={2} />
                   PDF
                 </Link>
                 <DeleteContractButton id={c.id} />

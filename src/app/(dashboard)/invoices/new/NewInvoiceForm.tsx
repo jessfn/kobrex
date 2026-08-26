@@ -2,8 +2,9 @@
 
 import { useActionState, useMemo, useState } from "react";
 import Link from "next/link";
+import { Plus, X } from "lucide-react";
 import { createInvoiceAction, type ActionResult } from "@/lib/actions/invoices";
-import { Button, Card, ErrorText, Input, Label, Textarea } from "@/components/ui";
+import { Button, Card, ErrorText, Input, Label, Select, Textarea } from "@/components/ui";
 
 type Item = { description: string; quantity: string; unitPrice: string };
 
@@ -26,9 +27,9 @@ export function NewInvoiceForm({
 
   if (clients.length === 0) {
     return (
-      <Card className="text-center text-brand-700">
+      <Card className="text-center text-[var(--color-text-muted)]">
         Necesitas al menos un cliente antes de crear una factura.{" "}
-        <Link href="/clients/new" className="underline font-bold">
+        <Link href="/clients/new" className="font-medium text-brand-700 underline underline-offset-2">
           Crear cliente
         </Link>
       </Card>
@@ -51,46 +52,37 @@ export function NewInvoiceForm({
 
         <div>
           <Label htmlFor="clientId">Cliente *</Label>
-          <select
-            id="clientId"
-            name="clientId"
-            required
-            value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
-            className="w-full rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-base outline-none focus:border-brand-500"
-          >
+          <Select id="clientId" name="clientId" required value={clientId} onChange={(e) => setClientId(e.target.value)}>
             {clients.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {filteredProjects.length > 0 && (
           <div>
             <Label htmlFor="projectId">Proyecto (opcional)</Label>
-            <select
-              id="projectId"
-              name="projectId"
-              defaultValue=""
-              className="w-full rounded-xl border-2 border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-base outline-none focus:border-brand-500"
-            >
+            <Select id="projectId" name="projectId" defaultValue="">
               <option value="">Sin proyecto</option>
               {filteredProjects.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         )}
 
         <div>
           <Label>Ítems *</Label>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {items.map((item, i) => (
-              <div key={i} className="grid grid-cols-1 gap-2 rounded-xl border-2 border-[var(--color-border)] p-3 sm:grid-cols-[1fr_90px_120px_36px]">
+              <div
+                key={i}
+                className="grid grid-cols-1 gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-2.5 sm:grid-cols-[1fr_88px_120px_32px]"
+              >
                 <input
                   name="itemDescription"
                   placeholder="Descripción"
@@ -101,7 +93,7 @@ export function NewInvoiceForm({
                     next[i] = { ...next[i], description: e.target.value };
                     setItems(next);
                   }}
-                  className="rounded-lg border-2 border-[var(--color-border)] px-3 py-2 text-sm outline-none focus:border-brand-500"
+                  className="rounded-md border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none transition-all duration-150 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10"
                 />
                 <input
                   name="itemQuantity"
@@ -115,7 +107,7 @@ export function NewInvoiceForm({
                     next[i] = { ...next[i], quantity: e.target.value };
                     setItems(next);
                   }}
-                  className="rounded-lg border-2 border-[var(--color-border)] px-3 py-2 text-sm outline-none focus:border-brand-500"
+                  className="rounded-md border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none transition-all duration-150 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10"
                 />
                 <input
                   name="itemUnitPrice"
@@ -129,15 +121,16 @@ export function NewInvoiceForm({
                     next[i] = { ...next[i], unitPrice: e.target.value };
                     setItems(next);
                   }}
-                  className="rounded-lg border-2 border-[var(--color-border)] px-3 py-2 text-sm outline-none focus:border-brand-500"
+                  className="rounded-md border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none transition-all duration-150 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10"
                 />
                 <button
                   type="button"
                   onClick={() => setItems(items.filter((_, idx) => idx !== i))}
                   disabled={items.length === 1}
-                  className="rounded-lg bg-red-950 text-white disabled:opacity-30"
+                  aria-label="Eliminar ítem"
+                  className="flex items-center justify-center rounded-md text-[var(--color-text-muted)] transition-colors duration-150 hover:bg-red-50 hover:text-brand-700 disabled:opacity-30 disabled:hover:bg-transparent"
                 >
-                  ✕
+                  <X size={16} strokeWidth={2} />
                 </button>
               </div>
             ))}
@@ -145,14 +138,18 @@ export function NewInvoiceForm({
           <button
             type="button"
             onClick={() => setItems([...items, { description: "", quantity: "1", unitPrice: "" }])}
-            className="mt-2 text-sm font-bold text-brand-700 underline"
+            className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-brand-700 transition-opacity duration-150 hover:opacity-70"
           >
-            + Agregar ítem
+            <Plus size={15} strokeWidth={2} />
+            Agregar ítem
           </button>
         </div>
 
-        <div className="text-right text-xl font-black text-brand-900">
-          Total: ${total.toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+        <div className="flex items-baseline justify-end gap-2 border-t border-[var(--color-border)] pt-4">
+          <span className="text-sm text-[var(--color-text-muted)]">Total</span>
+          <span className="text-2xl font-semibold tracking-tight text-[var(--foreground)]">
+            ${total.toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+          </span>
         </div>
 
         <div>

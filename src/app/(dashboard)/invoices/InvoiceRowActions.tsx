@@ -1,33 +1,37 @@
 "use client";
 
 import Link from "next/link";
+import { FileText, Check, Trash2 } from "lucide-react";
 import { deleteInvoiceAction, markInvoicePaidAction } from "@/lib/actions/invoices";
 
 export function InvoiceRowActions({ id, paid }: { id: string; paid: boolean }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-1.5">
       <Link
         href={`/api/invoices/${id}/pdf`}
         target="_blank"
-        className="rounded-lg border-2 border-brand-300 px-2 py-1 text-xs font-bold text-brand-700 hover:bg-brand-50"
+        aria-label="Descargar PDF"
+        className="inline-flex items-center justify-center rounded-md p-1.5 text-[var(--color-text-muted)] transition-colors duration-150 hover:bg-[var(--color-surface-muted)] hover:text-[var(--foreground)]"
       >
-        PDF
+        <FileText size={15} strokeWidth={1.75} />
       </Link>
       {!paid && (
         <button
           onClick={() => markInvoicePaidAction(id)}
-          className="rounded-lg border-2 border-green-300 bg-green-50 px-2 py-1 text-xs font-bold text-green-800 hover:bg-green-100"
+          aria-label="Marcar como pagada"
+          className="inline-flex items-center justify-center rounded-md p-1.5 text-emerald-700 transition-colors duration-150 hover:bg-emerald-50"
         >
-          Marcar pagada
+          <Check size={15} strokeWidth={2} />
         </button>
       )}
       <button
         onClick={() => {
           if (confirm("¿Eliminar esta factura?")) deleteInvoiceAction(id);
         }}
-        className="rounded-lg border-2 border-red-900 bg-red-950 px-2 py-1 text-xs font-bold text-white hover:bg-black"
+        aria-label="Eliminar factura"
+        className="inline-flex items-center justify-center rounded-md p-1.5 text-[var(--color-text-muted)] transition-colors duration-150 hover:bg-red-50 hover:text-brand-700"
       >
-        Eliminar
+        <Trash2 size={15} strokeWidth={1.75} />
       </button>
     </div>
   );

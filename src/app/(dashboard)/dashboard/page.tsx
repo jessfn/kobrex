@@ -1,3 +1,4 @@
+import { Wallet, Users, Clock, AlertTriangle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Card } from "@/components/ui";
@@ -31,20 +32,27 @@ export default async function DashboardPage() {
   const overdueTotal = overdueInvoices.reduce((sum, inv) => sum + invoiceTotal(inv.items), 0);
 
   const stats = [
-    { label: "Ingresos del mes", value: `$${monthlyIncome.toLocaleString("es-MX", { minimumFractionDigits: 2 })}` },
-    { label: "Clientes activos", value: clientsCount.toString() },
-    { label: "Facturas pendientes", value: `$${pendingTotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })}` },
-    { label: "Facturas vencidas", value: `$${overdueTotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })}` },
+    { label: "Ingresos del mes", value: monthlyIncome, icon: Wallet },
+    { label: "Clientes activos", value: clientsCount, icon: Users, plain: true },
+    { label: "Facturas pendientes", value: pendingTotal, icon: Clock },
+    { label: "Facturas vencidas", value: overdueTotal, icon: AlertTriangle },
   ];
 
   return (
     <div>
-      <h1 className="mb-8 text-3xl font-black tracking-tight text-brand-800">Panel</h1>
+      <h1 className="mb-8 text-2xl font-semibold tracking-tight">Panel</h1>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
-          <Card key={s.label}>
-            <p className="text-xs font-extrabold uppercase tracking-wider text-brand-600">{s.label}</p>
-            <p className="mt-2 text-2xl font-black text-brand-900">{s.value}</p>
+          <Card key={s.label} className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-medium text-[var(--color-text-muted)]">{s.label}</p>
+              <p className="mt-2 text-2xl font-semibold tracking-tight">
+                {s.plain ? s.value : `$${s.value.toLocaleString("es-MX", { minimumFractionDigits: 2 })}`}
+              </p>
+            </div>
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--color-surface-muted)] text-brand-700">
+              <s.icon size={17} strokeWidth={1.75} />
+            </div>
           </Card>
         ))}
       </div>

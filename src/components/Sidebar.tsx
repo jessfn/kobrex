@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { LayoutGrid, Users, FolderKanban, Receipt, FileText, Menu, X, LogOut } from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth-client";
 
 const links = [
-  { href: "/dashboard", label: "Panel", icon: "📊" },
-  { href: "/clients", label: "Clientes", icon: "👤" },
-  { href: "/projects", label: "Proyectos", icon: "📁" },
-  { href: "/invoices", label: "Facturas", icon: "🧾" },
-  { href: "/contracts", label: "Contratos", icon: "📄" },
+  { href: "/dashboard", label: "Panel", icon: LayoutGrid },
+  { href: "/clients", label: "Clientes", icon: Users },
+  { href: "/projects", label: "Proyectos", icon: FolderKanban },
+  { href: "/invoices", label: "Facturas", icon: Receipt },
+  { href: "/contracts", label: "Contratos", icon: FileText },
 ];
 
 export function Sidebar({ userName }: { userName: string }) {
@@ -19,30 +20,29 @@ export function Sidebar({ userName }: { userName: string }) {
 
   return (
     <>
-      <div className="flex items-center justify-between border-b-2 border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 md:hidden">
-        <span className="text-2xl font-black text-brand-700">
-          Kobre<span className="text-red-950">x</span>
+      <div className="flex items-center justify-between border-b border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 md:hidden">
+        <span className="text-lg font-semibold tracking-tight text-brand-800">
+          Kobrex
         </span>
         <button
           onClick={() => setOpen(!open)}
-          className="rounded-lg border-2 border-brand-300 px-3 py-2 font-bold text-brand-700"
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--color-border-strong)] text-[var(--foreground)] transition-colors duration-150 hover:bg-[var(--color-surface-muted)]"
         >
-          {open ? "✕" : "☰"}
+          {open ? <X size={17} strokeWidth={1.75} /> : <Menu size={17} strokeWidth={1.75} />}
         </button>
       </div>
 
       <aside
         className={`${
           open ? "block" : "hidden"
-        } w-full border-b-2 border-[var(--color-border)] bg-[var(--color-surface)] md:block md:h-screen md:w-64 md:shrink-0 md:border-b-0 md:border-r-2`}
+        } w-full border-b border-[var(--color-border)] bg-[var(--color-surface)] md:flex md:h-screen md:w-60 md:shrink-0 md:flex-col md:border-b-0 md:border-r`}
       >
         <div className="hidden px-6 py-6 md:block">
-          <span className="text-3xl font-black text-brand-700">
-            Kobre<span className="text-red-950">x</span>
-          </span>
+          <span className="text-lg font-semibold tracking-tight text-brand-800">Kobrex</span>
         </div>
 
-        <nav className="flex flex-col gap-1 px-3 pb-4 md:pb-0">
+        <nav className="flex flex-col gap-0.5 px-3 pb-4 md:flex-1 md:pb-0">
           {links.map((link) => {
             const active = pathname.startsWith(link.href);
             return (
@@ -50,23 +50,27 @@ export function Sidebar({ userName }: { userName: string }) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-colors ${
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150 ${
                   active
-                    ? "bg-brand-600 text-white shadow-md"
-                    : "text-brand-800 hover:bg-brand-50"
+                    ? "bg-brand-50 text-brand-800"
+                    : "text-[var(--color-text-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--foreground)]"
                 }`}
               >
-                <span>{link.icon}</span>
+                <link.icon size={17} strokeWidth={1.75} />
                 {link.label}
               </Link>
             );
           })}
         </nav>
 
-        <div className="mt-auto hidden border-t-2 border-[var(--color-border)] p-4 md:block">
-          <p className="truncate text-xs font-bold text-brand-700">{userName}</p>
-          <form action={logoutAction}>
-            <button className="mt-2 text-xs font-semibold text-red-950 underline" type="submit">
+        <div className="hidden border-t border-[var(--color-border)] p-4 md:block">
+          <p className="truncate text-xs font-medium text-[var(--foreground)]">{userName}</p>
+          <form action={logoutAction} className="mt-2">
+            <button
+              type="submit"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)] transition-colors duration-150 hover:text-brand-700"
+            >
+              <LogOut size={13} strokeWidth={1.75} />
               Cerrar sesión
             </button>
           </form>

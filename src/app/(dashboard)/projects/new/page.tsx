@@ -11,7 +11,7 @@ export default async function NewProjectPage() {
 
   return (
     <div className="mx-auto max-w-xl">
-      <h1 className="mb-6 text-3xl font-black tracking-tight text-brand-800">Nuevo proyecto</h1>
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Nuevo proyecto</h1>
       <NewProjectForm clients={clients.map((c) => ({ id: c.id, name: c.name }))} />
     </div>
   );
