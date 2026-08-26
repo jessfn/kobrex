@@ -13,7 +13,8 @@ npm ci
 echo "==> Running database migrations..."
 npx prisma migrate deploy
 
-echo "==> Building..."
+echo "==> Building (clean, sin cache de Turbopack)..."
+rm -rf .next
 npm run build
 
 echo "==> Restarting app with PM2..."
