@@ -5,10 +5,13 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { signIn } from "@/lib/auth";
 
+const TRIAL_DAYS = 14;
+
 const registerSchema = z.object({
   name: z.string().min(2, "El nombre es muy corto"),
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  acceptedTerms: z.literal("on", { message: "Debes aceptar los Términos y el Aviso de Privacidad" }),
 });
 
 export type ActionResult = { error?: string };
@@ -21,6 +24,7 @@ export async function registerAction(
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
+    acceptedTerms: formData.get("acceptedTerms"),
   });
 
   if (!parsed.success) {
@@ -35,7 +39,16 @@ export async function registerAction(
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  await prisma.user.create({ data: { name, email, passwordHash } });
+  const trialEndsAt = new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000);
+
+  await prisma.user.create({
+    data: {
+      name,
+      email,
+      passwordHash,
+      subscription: { create: { status: "TRIALING", trialEndsAt } },
+    },
+  });
 
   await signIn("credentials", { email, password, redirectTo: "/dashboard" });
   return {};

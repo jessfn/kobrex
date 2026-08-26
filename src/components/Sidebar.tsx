@@ -3,7 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { LayoutGrid, Users, FolderKanban, Receipt, FileText, Menu, X, LogOut, Settings } from "lucide-react";
+import {
+  LayoutGrid,
+  Users,
+  FolderKanban,
+  Receipt,
+  FileText,
+  Menu,
+  X,
+  LogOut,
+  Settings,
+  CreditCard,
+  ShieldCheck,
+} from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth-client";
 
 const links = [
@@ -12,10 +24,11 @@ const links = [
   { href: "/projects", label: "Proyectos", icon: FolderKanban },
   { href: "/invoices", label: "Recibos", icon: Receipt },
   { href: "/contracts", label: "Contratos", icon: FileText },
+  { href: "/billing", label: "Facturación", icon: CreditCard },
   { href: "/settings", label: "Configuración", icon: Settings },
 ];
 
-export function Sidebar({ userName }: { userName: string }) {
+export function Sidebar({ userName, isOwner }: { userName: string; isOwner?: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -62,6 +75,16 @@ export function Sidebar({ userName }: { userName: string }) {
               </Link>
             );
           })}
+          {isOwner && (
+            <Link
+              href="/admin"
+              onClick={() => setOpen(false)}
+              className="mt-2 flex items-center gap-3 rounded-lg border-t border-[var(--color-border)] px-3 pt-3 text-sm font-medium text-[var(--color-text-muted)] transition-colors duration-150 hover:text-brand-700"
+            >
+              <ShieldCheck size={17} strokeWidth={1.75} />
+              Admin
+            </Link>
+          )}
         </nav>
 
         <div className="hidden border-t border-[var(--color-border)] p-4 md:block">

@@ -20,7 +20,14 @@ export default function LoginPage() {
               <Input id="email" name="email" type="email" required placeholder="tu@email.com" />
             </div>
             <div>
-              <Label htmlFor="password">Contraseña</Label>
+              <div className="mb-1.5 flex items-center justify-between">
+                <label htmlFor="password" className="block text-xs font-medium text-[var(--color-text-muted)]">
+                  Contraseña
+                </label>
+                <Link href="/forgot-password" className="text-xs font-medium text-brand-700 underline underline-offset-2">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
               <Input id="password" name="password" type="password" required placeholder="••••••••" />
             </div>
             <ErrorText>{state.error}</ErrorText>

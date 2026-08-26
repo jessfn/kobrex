@@ -27,6 +27,24 @@ export default function RegisterPage() {
               <Label htmlFor="password">Contraseña</Label>
               <Input id="password" name="password" type="password" required placeholder="Mínimo 6 caracteres" />
             </div>
+            <label className="flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
+              <input
+                type="checkbox"
+                name="acceptedTerms"
+                required
+                className="mt-0.5 h-4 w-4 rounded border-[var(--color-border-strong)] accent-brand-700"
+              />
+              <span>
+                Acepto los{" "}
+                <Link href="/terms" target="_blank" className="font-medium text-brand-700 underline underline-offset-2">
+                  Términos y Condiciones
+                </Link>{" "}
+                y el{" "}
+                <Link href="/privacy" target="_blank" className="font-medium text-brand-700 underline underline-offset-2">
+                  Aviso de Privacidad
+                </Link>
+              </span>
+            </label>
             <ErrorText>{state.error}</ErrorText>
             <Button type="submit" disabled={pending} className="w-full">
               {pending ? "Creando cuenta..." : "Crear cuenta"}

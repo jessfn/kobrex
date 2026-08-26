@@ -34,3 +34,20 @@ export async function sendInvoiceReminder(params: {
     `,
   });
 }
+
+export async function sendPasswordResetEmail(params: { to: string; name: string; resetUrl: string }) {
+  const { to, name, resetUrl } = params;
+
+  await getResend().emails.send({
+    from: process.env.EMAIL_FROM ?? "Kobrex <onboarding@resend.dev>",
+    to,
+    subject: "Recupera tu contraseña de Kobrex",
+    html: `
+      <p>Hola ${name},</p>
+      <p>Recibimos una solicitud para restablecer tu contraseña. Haz clic en el siguiente enlace para
+      elegir una nueva (válido por 1 hora):</p>
+      <p><a href="${resetUrl}">${resetUrl}</a></p>
+      <p>Si tú no solicitaste esto, puedes ignorar este correo.</p>
+    `,
+  });
+}
