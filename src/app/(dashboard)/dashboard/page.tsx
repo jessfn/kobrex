@@ -2,7 +2,7 @@ import { Wallet, Users, Clock, AlertTriangle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Card } from "@/components/ui";
-import { invoiceTotal } from "@/lib/invoice-utils";
+import { invoiceBreakdown } from "@/lib/invoice-utils";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -27,15 +27,24 @@ export default async function DashboardPage() {
     }),
   ]);
 
-  const monthlyIncome = paidThisMonth.reduce((sum, inv) => sum + invoiceTotal(inv.items), 0);
-  const pendingTotal = pendingInvoices.reduce((sum, inv) => sum + invoiceTotal(inv.items), 0);
-  const overdueTotal = overdueInvoices.reduce((sum, inv) => sum + invoiceTotal(inv.items), 0);
+  const monthlyIncome = paidThisMonth.reduce(
+    (sum, inv) => sum + invoiceBreakdown(inv.items, inv.applyIva, inv.ivaRate).total,
+    0
+  );
+  const pendingTotal = pendingInvoices.reduce(
+    (sum, inv) => sum + invoiceBreakdown(inv.items, inv.applyIva, inv.ivaRate).total,
+    0
+  );
+  const overdueTotal = overdueInvoices.reduce(
+    (sum, inv) => sum + invoiceBreakdown(inv.items, inv.applyIva, inv.ivaRate).total,
+    0
+  );
 
   const stats = [
     { label: "Ingresos del mes", value: monthlyIncome, icon: Wallet },
     { label: "Clientes activos", value: clientsCount, icon: Users, plain: true },
-    { label: "Facturas pendientes", value: pendingTotal, icon: Clock },
-    { label: "Facturas vencidas", value: overdueTotal, icon: AlertTriangle },
+    { label: "Recibos pendientes", value: pendingTotal, icon: Clock },
+    { label: "Recibos vencidos", value: overdueTotal, icon: AlertTriangle },
   ];
 
   return (

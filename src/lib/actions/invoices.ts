@@ -21,6 +21,8 @@ export async function createInvoiceAction(_prev: ActionResult, formData: FormDat
   const number = formData.get("number") as string;
   const dueDate = formData.get("dueDate") as string;
   const notes = (formData.get("notes") as string) || undefined;
+  const paymentMethod = (formData.get("paymentMethod") as string) || undefined;
+  const applyIva = formData.get("applyIva") === "on";
 
   if (!clientId || !number || !dueDate) return { error: "Faltan campos requeridos" };
 
@@ -42,7 +44,7 @@ export async function createInvoiceAction(_prev: ActionResult, formData: FormDat
   if (items.length === 0) return { error: "Agrega al menos un ítem con cantidad mayor a 0" };
 
   const existing = await prisma.invoice.findUnique({ where: { userId_number: { userId, number } } });
-  if (existing) return { error: "Ya existe una factura con ese número" };
+  if (existing) return { error: "Ya existe un recibo con ese número" };
 
   await prisma.invoice.create({
     data: {
@@ -52,6 +54,8 @@ export async function createInvoiceAction(_prev: ActionResult, formData: FormDat
       projectId: projectId || undefined,
       dueDate: new Date(dueDate),
       notes,
+      paymentMethod,
+      applyIva,
       items: { create: items },
     },
   });

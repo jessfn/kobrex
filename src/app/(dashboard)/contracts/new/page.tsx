@@ -7,18 +7,24 @@ export default async function NewContractPage() {
   const session = await auth();
   const userId = session!.user.id;
 
-  const [clients, projects] = await Promise.all([
+  const [clients, projects, user] = await Promise.all([
     prisma.client.findMany({ where: { userId }, orderBy: { name: "asc" } }),
     prisma.project.findMany({ where: { userId }, orderBy: { name: "asc" } }),
+    prisma.user.findUniqueOrThrow({ where: { id: userId } }),
   ]);
 
   return (
     <div className="mx-auto max-w-2xl">
       <h1 className="mb-6 text-2xl font-semibold tracking-tight">Nuevo contrato</h1>
       <NewContractForm
-        clients={clients.map((c) => ({ id: c.id, name: c.name }))}
+        clients={clients.map((c) => ({ id: c.id, name: c.name, rfc: c.rfc, address: c.address }))}
         projects={projects.map((p) => ({ id: p.id, name: p.name, clientId: p.clientId }))}
         template={CONTRACT_TEMPLATE}
+        defaultFreelancer={{
+          name: user.businessName || user.name,
+          rfc: user.rfc ?? "",
+          address: user.fiscalAddress ?? "",
+        }}
       />
     </div>
   );

@@ -20,15 +20,18 @@ export function NewInvoiceForm({
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(createInvoiceAction, {});
   const [clientId, setClientId] = useState(clients[0]?.id ?? "");
   const [items, setItems] = useState<Item[]>([{ description: "", quantity: "1", unitPrice: "" }]);
+  const [applyIva, setApplyIva] = useState(false);
 
   const filteredProjects = useMemo(() => projects.filter((p) => p.clientId === clientId), [projects, clientId]);
 
-  const total = items.reduce((sum, it) => sum + (Number(it.quantity) || 0) * (Number(it.unitPrice) || 0), 0);
+  const subtotal = items.reduce((sum, it) => sum + (Number(it.quantity) || 0) * (Number(it.unitPrice) || 0), 0);
+  const iva = applyIva ? subtotal * 0.16 : 0;
+  const total = subtotal + iva;
 
   if (clients.length === 0) {
     return (
       <Card className="text-center text-[var(--color-text-muted)]">
-        Necesitas al menos un cliente antes de crear una factura.{" "}
+        Necesitas al menos un cliente antes de crear un recibo.{" "}
         <Link href="/clients/new" className="font-medium text-brand-700 underline underline-offset-2">
           Crear cliente
         </Link>
@@ -41,7 +44,7 @@ export function NewInvoiceForm({
       <form action={formAction} className="space-y-5">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <Label htmlFor="number">Número de factura *</Label>
+            <Label htmlFor="number">Número de recibo *</Label>
             <Input id="number" name="number" required defaultValue={suggestedNumber} />
           </div>
           <div>
@@ -145,21 +148,64 @@ export function NewInvoiceForm({
           </button>
         </div>
 
-        <div className="flex items-baseline justify-end gap-2 border-t border-[var(--color-border)] pt-4">
-          <span className="text-sm text-[var(--color-text-muted)]">Total</span>
-          <span className="text-2xl font-semibold tracking-tight text-[var(--foreground)]">
-            ${total.toLocaleString("es-MX", { minimumFractionDigits: 2 })}
-          </span>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <Label htmlFor="paymentMethod">Forma de pago</Label>
+            <Input id="paymentMethod" name="paymentMethod" list="payment-methods" placeholder="Transferencia" />
+            <datalist id="payment-methods">
+              <option value="Transferencia electrónica" />
+              <option value="Efectivo" />
+              <option value="Tarjeta de débito" />
+              <option value="Tarjeta de crédito" />
+              <option value="Cheque" />
+            </datalist>
+          </div>
+          <div className="flex items-end pb-2.5">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="applyIva"
+                checked={applyIva}
+                onChange={(e) => setApplyIva(e.target.checked)}
+                className="h-4 w-4 rounded border-[var(--color-border-strong)] accent-brand-700"
+              />
+              Aplicar IVA (16%)
+            </label>
+          </div>
+        </div>
+
+        <div className="space-y-1 border-t border-[var(--color-border)] pt-4 text-sm">
+          <div className="flex justify-between text-[var(--color-text-muted)]">
+            <span>Subtotal</span>
+            <span>${subtotal.toLocaleString("es-MX", { minimumFractionDigits: 2 })}</span>
+          </div>
+          {applyIva && (
+            <div className="flex justify-between text-[var(--color-text-muted)]">
+              <span>IVA (16%)</span>
+              <span>${iva.toLocaleString("es-MX", { minimumFractionDigits: 2 })}</span>
+            </div>
+          )}
+          <div className="flex items-baseline justify-between pt-1">
+            <span className="font-medium">Total</span>
+            <span className="text-2xl font-semibold tracking-tight text-[var(--foreground)]">
+              ${total.toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+            </span>
+          </div>
         </div>
 
         <div>
-          <Label htmlFor="notes">Notas</Label>
+          <Label htmlFor="notes">Notas / condiciones de pago</Label>
           <Textarea id="notes" name="notes" rows={2} />
         </div>
 
+        <p className="text-xs text-[var(--color-text-muted)]">
+          Este documento se genera como recibo de cobro y no constituye un Comprobante Fiscal Digital por Internet
+          (CFDI). Si necesitas una factura fiscal, deberás timbrarla por separado ante el SAT.
+        </p>
+
         <ErrorText>{state.error}</ErrorText>
         <Button type="submit" disabled={pending} className="w-full">
-          {pending ? "Guardando..." : "Crear factura"}
+          {pending ? "Guardando..." : "Crear recibo"}
         </Button>
       </form>
     </Card>

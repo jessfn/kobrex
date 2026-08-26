@@ -9,7 +9,7 @@ export function DeleteClientButton({ id }: { id: string }) {
       type="button"
       aria-label="Eliminar cliente"
       onClick={() => {
-        if (confirm("¿Eliminar este cliente? Esto también borrará sus proyectos, facturas y contratos.")) {
+        if (confirm("¿Eliminar este cliente? Esto también borrará sus proyectos, recibos y contratos.")) {
           deleteClientAction(id);
         }
       }}

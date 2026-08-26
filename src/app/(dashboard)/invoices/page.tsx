@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Badge, Button, Card } from "@/components/ui";
-import { invoiceTotal, effectiveStatus } from "@/lib/invoice-utils";
+import { invoiceBreakdown, effectiveStatus } from "@/lib/invoice-utils";
 import { InvoiceRowActions } from "./InvoiceRowActions";
 
 const statusTone = { PENDING: "warning", PAID: "success", OVERDUE: "danger", CANCELLED: "default" } as const;
@@ -20,17 +20,17 @@ export default async function InvoicesPage() {
   return (
     <div>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Facturas</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Recibos</h1>
         <Link href="/invoices/new">
           <Button>
             <Plus size={15} strokeWidth={2} />
-            Nueva factura
+            Nuevo recibo
           </Button>
         </Link>
       </div>
 
       {invoices.length === 0 ? (
-        <Card className="text-center text-[var(--color-text-muted)]">Aún no tienes facturas.</Card>
+        <Card className="text-center text-[var(--color-text-muted)]">Aún no tienes recibos.</Card>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-[var(--color-border)]">
           <table className="w-full min-w-[640px] border-collapse bg-[var(--color-surface)] text-sm">
@@ -53,7 +53,10 @@ export default async function InvoicesPage() {
                     <td className="px-4 py-3">{inv.client.name}</td>
                     <td className="px-4 py-3 text-[var(--color-text-muted)]">{inv.dueDate.toLocaleDateString("es-MX")}</td>
                     <td className="px-4 py-3 font-medium">
-                      ${invoiceTotal(inv.items).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+                      $
+                      {invoiceBreakdown(inv.items, inv.applyIva, inv.ivaRate).total.toLocaleString("es-MX", {
+                        minimumFractionDigits: 2,
+                      })}
                     </td>
                     <td className="px-4 py-3">
                       <Badge tone={statusTone[status]}>{statusLabel[status]}</Badge>

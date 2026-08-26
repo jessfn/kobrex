@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { LayoutGrid, Users, FolderKanban, Receipt, FileText, Menu, X, LogOut } from "lucide-react";
+import { LayoutGrid, Users, FolderKanban, Receipt, FileText, Menu, X, LogOut, Settings } from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth-client";
 
 const links = [
   { href: "/dashboard", label: "Panel", icon: LayoutGrid },
   { href: "/clients", label: "Clientes", icon: Users },
   { href: "/projects", label: "Proyectos", icon: FolderKanban },
-  { href: "/invoices", label: "Facturas", icon: Receipt },
+  { href: "/invoices", label: "Recibos", icon: Receipt },
   { href: "/contracts", label: "Contratos", icon: FileText },
+  { href: "/settings", label: "Configuración", icon: Settings },
 ];
 
 export function Sidebar({ userName }: { userName: string }) {

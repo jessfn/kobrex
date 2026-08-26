@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #1c1614;
 
@@ -54,17 +55,7 @@
   --color-text-muted: var(--color-text-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #15100f;
-    --foreground: #f3efed;
-    --color-surface: #1d1716;
-    --color-surface-muted: #241c1a;
-    --color-border: #332825;
-    --color-border-strong: #453633;
-    --color-text-muted: #a89c97;
-  }
-}
+/* Tema forzado a claro: Kobrex no sigue el modo oscuro del sistema. */
 
 * {
   transition-property: color, background-color, border-color, box-shadow, transform, opacity;

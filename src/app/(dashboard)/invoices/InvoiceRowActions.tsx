@@ -26,9 +26,9 @@ export function InvoiceRowActions({ id, paid }: { id: string; paid: boolean }) {
       )}
       <button
         onClick={() => {
-          if (confirm("¿Eliminar esta factura?")) deleteInvoiceAction(id);
+          if (confirm("¿Eliminar este recibo?")) deleteInvoiceAction(id);
         }}
-        aria-label="Eliminar factura"
+        aria-label="Eliminar recibo"
         className="inline-flex items-center justify-center rounded-md p-1.5 text-[var(--color-text-muted)] transition-colors duration-150 hover:bg-red-50 hover:text-brand-700"
       >
         <Trash2 size={15} strokeWidth={1.75} />

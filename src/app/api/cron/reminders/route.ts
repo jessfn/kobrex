@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendInvoiceReminder } from "@/lib/email/resend";
-import { invoiceTotal } from "@/lib/invoice-utils";
+import { invoiceBreakdown } from "@/lib/invoice-utils";
 
 /**
  * Disparado por un cron del sistema operativo en el VPS (no por node-cron embebido,
@@ -35,7 +35,7 @@ export async function GET(req: Request) {
       to: inv.client.email,
       clientName: inv.client.name,
       invoiceNumber: inv.number,
-      amount: invoiceTotal(inv.items),
+      amount: invoiceBreakdown(inv.items, inv.applyIva, inv.ivaRate).total,
       dueDate: inv.dueDate,
       overdue: inv.dueDate < now,
     });

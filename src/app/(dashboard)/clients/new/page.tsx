@@ -30,6 +30,16 @@ export default function NewClientPage() {
               <Input id="phone" name="phone" />
             </div>
           </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="rfc">RFC (opcional)</Label>
+              <Input id="rfc" name="rfc" placeholder="XAXX010101000" />
+            </div>
+            <div>
+              <Label htmlFor="address">Domicilio</Label>
+              <Input id="address" name="address" />
+            </div>
+          </div>
           <div>
             <Label htmlFor="notes">Notas</Label>
             <Textarea id="notes" name="notes" rows={3} />

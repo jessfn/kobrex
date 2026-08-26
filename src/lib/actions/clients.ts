@@ -11,6 +11,8 @@ const clientSchema = z.object({
   company: z.string().optional(),
   email: z.string().email().optional().or(z.literal("")),
   phone: z.string().optional(),
+  rfc: z.string().optional(),
+  address: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -30,6 +32,8 @@ export async function createClientAction(_prev: ActionResult, formData: FormData
     company: formData.get("company") || undefined,
     email: formData.get("email") || undefined,
     phone: formData.get("phone") || undefined,
+    rfc: formData.get("rfc") || undefined,
+    address: formData.get("address") || undefined,
     notes: formData.get("notes") || undefined,
   });
 

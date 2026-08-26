@@ -40,6 +40,7 @@ export default async function ClientsPage() {
               {c.company && <p className="text-sm text-[var(--color-text-muted)]">{c.company}</p>}
               {c.email && <p className="text-sm text-[var(--color-text-muted)]">{c.email}</p>}
               {c.phone && <p className="text-sm text-[var(--color-text-muted)]">{c.phone}</p>}
+              {c.rfc && <p className="text-sm text-[var(--color-text-muted)]">RFC: {c.rfc}</p>}
               <div className="mt-3 flex justify-end">
                 <DeleteClientButton id={c.id} />
               </div>

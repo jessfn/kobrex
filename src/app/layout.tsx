@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -13,8 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kobrex — Gestión de clientes y facturas",
-  description: "Gestiona clientes, proyectos, contratos y facturas en un solo lugar.",
+  title: "Kobrex — Gestión de clientes y recibos",
+  description: "Gestiona clientes, proyectos, contratos y recibos en un solo lugar.",
+};
+
+export const viewport: Viewport = {
+  colorScheme: "light",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

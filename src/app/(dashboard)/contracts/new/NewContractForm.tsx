@@ -5,35 +5,49 @@ import Link from "next/link";
 import { createContractAction, type ActionResult } from "@/lib/actions/contracts";
 import { Button, Card, ErrorText, Input, Label, Select, Textarea } from "@/components/ui";
 
+type ClientOption = { id: string; name: string; rfc: string | null; address: string | null };
+
 export function NewContractForm({
   clients,
   projects,
   template,
+  defaultFreelancer,
 }: {
-  clients: { id: string; name: string }[];
+  clients: ClientOption[];
   projects: { id: string; name: string; clientId: string }[];
   template: string;
+  defaultFreelancer: { name: string; rfc: string; address: string };
 }) {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(createContractAction, {});
   const [clientId, setClientId] = useState(clients[0]?.id ?? "");
-  const [freelancer, setFreelancer] = useState("");
+  const [freelancer, setFreelancer] = useState(defaultFreelancer.name);
+  const [freelancerRfc, setFreelancerRfc] = useState(defaultFreelancer.rfc);
+  const [freelancerAddress, setFreelancerAddress] = useState(defaultFreelancer.address);
   const [proyecto, setProyecto] = useState("");
   const [monto, setMonto] = useState("");
   const [fecha, setFecha] = useState("");
+  const [formaPago, setFormaPago] = useState("transferencia electrónica");
+  const [jurisdiccion, setJurisdiccion] = useState("Ciudad de México");
 
   const filteredProjects = useMemo(() => projects.filter((p) => p.clientId === clientId), [projects, clientId]);
-  const clientName = clients.find((c) => c.id === clientId)?.name ?? "";
+  const selectedClient = clients.find((c) => c.id === clientId);
 
-  const content = useMemo(
-    () =>
-      template
-        .replaceAll("{{freelancer}}", freelancer || "____________")
-        .replaceAll("{{cliente}}", clientName || "____________")
-        .replaceAll("{{proyecto}}", proyecto || "____________")
-        .replaceAll("{{monto}}", monto || "0.00")
-        .replaceAll("{{fecha}}", fecha || "____________"),
-    [template, freelancer, clientName, proyecto, monto, fecha]
-  );
+  const content = useMemo(() => {
+    const freelancerRfcLine = freelancerRfc ? `, RFC ${freelancerRfc}` : "";
+    const clienteRfcLine = selectedClient?.rfc ? `, RFC ${selectedClient.rfc}` : "";
+    return template
+      .replaceAll("{{freelancer}}", freelancer || "____________")
+      .replaceAll("{{freelancerRfcLine}}", freelancerRfcLine)
+      .replaceAll("{{freelancerAddress}}", freelancerAddress || "____________")
+      .replaceAll("{{cliente}}", selectedClient?.name || "____________")
+      .replaceAll("{{clienteRfcLine}}", clienteRfcLine)
+      .replaceAll("{{clienteAddress}}", selectedClient?.address || "____________")
+      .replaceAll("{{proyecto}}", proyecto || "____________")
+      .replaceAll("{{monto}}", monto || "0.00")
+      .replaceAll("{{formaPago}}", formaPago || "____________")
+      .replaceAll("{{fecha}}", fecha || "____________")
+      .replaceAll("{{jurisdiccion}}", jurisdiccion || "____________");
+  }, [template, freelancer, freelancerRfc, freelancerAddress, selectedClient, proyecto, monto, formaPago, fecha, jurisdiccion]);
 
   if (clients.length === 0) {
     return (
@@ -63,6 +77,15 @@ export function NewContractForm({
               </option>
             ))}
           </Select>
+          {selectedClient && !selectedClient.rfc && (
+            <p className="mt-1.5 text-xs text-[var(--color-text-muted)]">
+              Este cliente no tiene RFC/domicilio capturado.{" "}
+              <Link href="/clients/new" className="underline">
+                Agrégalo en su ficha
+              </Link>
+              .
+            </p>
+          )}
         </div>
 
         {filteredProjects.length > 0 && (
@@ -81,8 +104,16 @@ export function NewContractForm({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <Label>Tu nombre / empresa</Label>
+            <Label>Tu nombre / razón social</Label>
             <Input value={freelancer} onChange={(e) => setFreelancer(e.target.value)} />
+          </div>
+          <div>
+            <Label>Tu RFC (opcional)</Label>
+            <Input value={freelancerRfc} onChange={(e) => setFreelancerRfc(e.target.value)} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Tu domicilio</Label>
+            <Input value={freelancerAddress} onChange={(e) => setFreelancerAddress(e.target.value)} />
           </div>
           <div>
             <Label>Nombre del proyecto</Label>
@@ -93,16 +124,25 @@ export function NewContractForm({
             <Input type="number" step="0.01" value={monto} onChange={(e) => setMonto(e.target.value)} />
           </div>
           <div>
+            <Label>Forma de pago</Label>
+            <Input value={formaPago} onChange={(e) => setFormaPago(e.target.value)} />
+          </div>
+          <div>
             <Label>Fecha de inicio</Label>
             <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Jurisdicción (ciudad/estado)</Label>
+            <Input value={jurisdiccion} onChange={(e) => setJurisdiccion(e.target.value)} />
           </div>
         </div>
 
         <div>
           <Label htmlFor="content">Contenido del contrato *</Label>
-          <Textarea id="content" name="content" rows={12} value={content} readOnly className="font-mono text-xs" />
+          <Textarea id="content" name="content" rows={16} value={content} readOnly className="font-mono text-xs" />
           <p className="mt-1.5 text-xs text-[var(--color-text-muted)]">
-            Se genera automáticamente con las variables de arriba. Puedes editarlo manualmente después de crearlo.
+            Se genera automáticamente con las variables de arriba. Puedes editarlo manualmente después de crearlo. Esta
+            plantilla es informativa y no sustituye la revisión de un profesional del derecho.
           </p>
         </div>
 

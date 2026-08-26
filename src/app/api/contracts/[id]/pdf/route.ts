@@ -10,10 +10,21 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
 
   const { id } = await context.params;
 
-  const contract = await prisma.contract.findFirst({ where: { id, userId: session.user.id } });
+  const [contract, user] = await Promise.all([
+    prisma.contract.findFirst({ where: { id, userId: session.user.id } }),
+    prisma.user.findUniqueOrThrow({ where: { id: session.user.id } }),
+  ]);
   if (!contract) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
 
-  const buffer = await renderToBuffer(ContractPdf({ title: contract.title, content: contract.content }));
+  const buffer = await renderToBuffer(
+    ContractPdf({
+      title: contract.title,
+      content: contract.content,
+      emitterName: user.businessName || user.name,
+      folio: contract.id.slice(-8).toUpperCase(),
+      date: contract.createdAt,
+    })
+  );
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
