@@ -29,6 +29,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Las peticiones POST a rutas de página son invocaciones de Server Actions (React).
+  // Cada action ya valida su propia sesión (requireUserId()/auth()) — si el middleware
+  // también intercepta y llama a auth()/redirect() aquí, corrompe el protocolo interno
+  // de Server Actions y Next responde "Failed to find Server Action".
+  if (request.method !== "GET") {
+    return NextResponse.next();
+  }
+
   const session = await auth();
 
   if (!session?.user) {
