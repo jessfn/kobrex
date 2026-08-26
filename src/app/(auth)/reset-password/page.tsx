@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { resetPasswordAction, type ActionResult } from "@/lib/actions/password-reset";
 import { Button, Card, ErrorText, Input, Label } from "@/components/ui";
+import { Logo } from "@/components/Logo";
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -43,10 +44,13 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4 py-12">
+    <div className="flex min-h-dvh items-center justify-center bg-brand-800 px-4 py-12">
       <div className="w-full max-w-sm">
-        <h1 className="mb-8 text-center text-xl font-semibold tracking-tight text-brand-800">Kobrex</h1>
-        <Card className="shadow-[var(--shadow-md)]">
+        <div className="mb-8 flex flex-col items-center gap-3">
+          <Logo size="lg" />
+          <h1 className="text-xl font-semibold tracking-tight text-white">Kobrex</h1>
+        </div>
+        <Card className="shadow-[var(--shadow-lg)]">
           <h2 className="mb-6 text-lg font-semibold tracking-tight">Elige una nueva contraseña</h2>
           <Suspense fallback={null}>
             <ResetPasswordForm />

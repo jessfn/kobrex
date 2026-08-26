@@ -4,15 +4,19 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { loginAction, type ActionResult } from "@/lib/actions/auth";
 import { Button, Card, ErrorText, Input, Label } from "@/components/ui";
+import { Logo } from "@/components/Logo";
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(loginAction, {});
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4 py-12">
+    <div className="flex min-h-dvh items-center justify-center bg-brand-800 px-4 py-12">
       <div className="w-full max-w-sm">
-        <h1 className="mb-8 text-center text-xl font-semibold tracking-tight text-brand-800">Kobrex</h1>
-        <Card className="shadow-[var(--shadow-md)]">
+        <div className="mb-8 flex flex-col items-center gap-3">
+          <Logo size="lg" />
+          <h1 className="text-xl font-semibold tracking-tight text-white">Kobrex</h1>
+        </div>
+        <Card className="shadow-[var(--shadow-lg)]">
           <h2 className="mb-6 text-lg font-semibold tracking-tight">Inicia sesión</h2>
           <form action={formAction} className="space-y-4">
             <div>
@@ -36,9 +40,9 @@ export default function LoginPage() {
             </Button>
           </form>
         </Card>
-        <p className="mt-6 text-center text-sm text-[var(--color-text-muted)]">
+        <p className="mt-6 text-center text-sm text-red-100">
           ¿No tienes cuenta?{" "}
-          <Link href="/register" className="font-medium text-brand-700 underline underline-offset-2">
+          <Link href="/register" className="font-medium text-white underline underline-offset-2">
             Regístrate
           </Link>
         </p>
