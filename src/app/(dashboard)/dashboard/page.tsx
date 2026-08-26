@@ -8,6 +8,11 @@ import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 
 const MONTH_LABELS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
+function formatMoney(value: number): string {
+  const sign = value < 0 ? "-" : "";
+  return `${sign}$${Math.abs(value).toLocaleString("es-MX", { minimumFractionDigits: 2 })}`;
+}
+
 export default async function DashboardPage() {
   const session = await auth();
   const userId = session!.user.id;
@@ -75,7 +80,12 @@ export default async function DashboardPage() {
   });
 
   const stats = [
-    { label: "Ganancia neta del mes", value: netProfit, icon: TrendingUp, color: "bg-emerald-50 text-emerald-600" },
+    {
+      label: "Ganancia neta del mes",
+      value: netProfit,
+      icon: TrendingUp,
+      color: netProfit < 0 ? "bg-rose-50 text-rose-600" : "bg-emerald-50 text-emerald-600",
+    },
     { label: "Clientes activos", value: clientsCount, icon: Users, plain: true, color: "bg-blue-50 text-blue-600" },
     { label: "Recibos pendientes", value: pendingTotal, icon: Clock, color: "bg-amber-50 text-amber-600" },
     { label: "Recibos vencidos", value: overdueTotal, icon: AlertTriangle, color: "bg-rose-50 text-rose-600" },
@@ -99,7 +109,7 @@ export default async function DashboardPage() {
             <div>
               <p className="text-xs font-medium text-[var(--color-text-muted)]">{s.label}</p>
               <p className="mt-2 text-2xl font-semibold tracking-tight">
-                {s.plain ? s.value : `$${s.value.toLocaleString("es-MX", { minimumFractionDigits: 2 })}`}
+                {s.plain ? s.value : formatMoney(s.value)}
               </p>
             </div>
             <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${s.color}`}>
