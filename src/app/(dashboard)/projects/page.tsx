@@ -1,0 +1,63 @@
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { Badge, Button, Card } from "@/components/ui";
+import { DeleteProjectButton } from "./DeleteProjectButton";
+
+const statusTone = {
+  ACTIVE: "success",
+  PAUSED: "warning",
+  COMPLETED: "default",
+  CANCELLED: "danger",
+} as const;
+
+const statusLabel = {
+  ACTIVE: "Activo",
+  PAUSED: "Pausado",
+  COMPLETED: "Completado",
+  CANCELLED: "Cancelado",
+};
+
+export default async function ProjectsPage() {
+  const session = await auth();
+  const projects = await prisma.project.findMany({
+    where: { userId: session!.user.id },
+    include: { client: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return (
+    <div>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-3xl font-black tracking-tight text-brand-800">Proyectos</h1>
+        <Link href="/projects/new">
+          <Button>+ Nuevo proyecto</Button>
+        </Link>
+      </div>
+
+      {projects.length === 0 ? (
+        <Card className="text-center text-brand-700">Aún no tienes proyectos.</Card>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((p) => (
+            <Card key={p.id} className="flex flex-col gap-2">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-lg font-extrabold text-brand-900">{p.name}</h3>
+                <Badge tone={statusTone[p.status]}>{statusLabel[p.status]}</Badge>
+              </div>
+              <p className="text-sm font-semibold text-brand-600">{p.client.name}</p>
+              {p.amount && (
+                <p className="text-sm text-brand-700">
+                  ${Number(p.amount).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+                </p>
+              )}
+              <div className="mt-3 flex justify-end">
+                <DeleteProjectButton id={p.id} />
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
