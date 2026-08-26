@@ -13,7 +13,7 @@ export async function adminLoginAction(_prev: ActionResult, formData: FormData):
   if (!email || !password) return { error: "Ingresa tu email y contraseña" };
 
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return { error: "Email o contraseña incorrectos" };
+  if (!user || !user.passwordHash) return { error: "Email o contraseña incorrectos" };
 
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return { error: "Email o contraseña incorrectos" };

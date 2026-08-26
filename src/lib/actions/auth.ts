@@ -4,8 +4,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { signIn } from "@/lib/auth";
-
-const TRIAL_DAYS = 14;
+import { newTrialEndDate } from "@/lib/subscription";
 
 const registerSchema = z.object({
   name: z.string().min(2, "El nombre es muy corto"),
@@ -39,14 +38,14 @@ export async function registerAction(
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  const trialEndsAt = new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000);
 
   await prisma.user.create({
     data: {
       name,
       email,
       passwordHash,
-      subscription: { create: { status: "TRIALING", trialEndsAt } },
+      acceptedTermsAt: new Date(),
+      subscription: { create: { status: "TRIALING", trialEndsAt: newTrialEndDate() } },
     },
   });
 
@@ -70,4 +69,8 @@ export async function loginAction(
     throw err;
   }
   return {};
+}
+
+export async function signInWithGoogleAction() {
+  await signIn("google", { redirectTo: "/dashboard" });
 }

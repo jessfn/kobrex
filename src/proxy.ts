@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { getAccessStatus } from "@/lib/subscription";
 
 const PUBLIC_PATHS = [
@@ -16,6 +17,10 @@ const PUBLIC_PATHS = [
 // Rutas dentro del área autenticada que deben ser alcanzables aunque la suscripción
 // haya vencido (para poder pagar) o que tienen su propia verificación de acceso (admin).
 const SUBSCRIPTION_EXEMPT_PATHS = ["/billing", "/settings", "/admin"];
+
+// El consentimiento legal es obligatorio para todos, pero no se revisa dentro de
+// /onboarding (para no entrar en bucle) ni en rutas ya públicas/de admin.
+const CONSENT_EXEMPT_PATHS = ["/onboarding", "/admin"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -42,6 +47,16 @@ export async function proxy(request: NextRequest) {
   if (!session?.user) {
     const loginPath = pathname.startsWith("/admin") ? "/admin/login" : "/login";
     return NextResponse.redirect(new URL(loginPath, request.url));
+  }
+
+  if (!CONSENT_EXEMPT_PATHS.some((p) => pathname.startsWith(p))) {
+    const dbUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { acceptedTermsAt: true },
+    });
+    if (!dbUser?.acceptedTermsAt) {
+      return NextResponse.redirect(new URL("/onboarding", request.url));
+    }
   }
 
   if (!SUBSCRIPTION_EXEMPT_PATHS.some((p) => pathname.startsWith(p))) {

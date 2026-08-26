@@ -5,6 +5,7 @@ import Link from "next/link";
 import { loginAction, type ActionResult } from "@/lib/actions/auth";
 import { Button, Card, ErrorText, Input, Label } from "@/components/ui";
 import { Logo } from "@/components/Logo";
+import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 
 export default function LoginPage() {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(loginAction, {});
@@ -18,6 +19,15 @@ export default function LoginPage() {
         </div>
         <Card className="shadow-[var(--shadow-lg)]">
           <h2 className="mb-6 text-lg font-semibold tracking-tight">Inicia sesión</h2>
+
+          <GoogleSignInButton label="Continuar con Google" />
+
+          <div className="my-5 flex items-center gap-3">
+            <div className="h-px flex-1 bg-[var(--color-border)]" />
+            <span className="text-xs text-[var(--color-text-muted)]">o con tu email</span>
+            <div className="h-px flex-1 bg-[var(--color-border)]" />
+          </div>
+
           <form action={formAction} className="space-y-4">
             <div>
               <Label htmlFor="email">Email</Label>

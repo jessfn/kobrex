@@ -1,6 +1,11 @@
 import { prisma } from "@/lib/prisma";
 
 export const PLAN_PRICE_MXN = 149;
+export const TRIAL_DAYS = 14;
+
+export function newTrialEndDate(): Date {
+  return new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000);
+}
 
 export type AccessStatus = {
   allowed: boolean;
