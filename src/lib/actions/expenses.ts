@@ -17,6 +17,7 @@ export type ActionResult = { error?: string };
 
 async function requireUserId() {
   const session = await auth();
+  console.error("[DEBUG requireUserId]", JSON.stringify(session));
   if (!session?.user?.id) redirect("/login");
   return session.user.id;
 }
