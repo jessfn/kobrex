@@ -5,18 +5,18 @@
   --background: #ffffff;
   --foreground: #1c1614;
 
-  /* Rojo oscuro, desaturado — acento, no dominante */
-  --color-red-50: #fbf5f4;
-  --color-red-100: #f5e6e4;
-  --color-red-200: #ead0cc;
-  --color-red-300: #d9aca5;
-  --color-red-400: #c17f74;
-  --color-red-500: #a8564a;
-  --color-red-600: #8f3c31;
-  --color-red-700: #742f26;
-  --color-red-800: #5f2820;
-  --color-red-900: #4d221c;
-  --color-red-950: #2c1210;
+  /* Rojo real (no guinda/café) */
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+  --color-red-900: #7f1d1d;
+  --color-red-950: #450a0a;
 
   --color-surface: #ffffff;
   --color-surface-muted: #faf8f7;

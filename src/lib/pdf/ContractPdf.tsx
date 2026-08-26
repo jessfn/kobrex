@@ -2,7 +2,7 @@ import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
 const INK = "#1c1614";
 const MUTED = "#6b6360";
-const ACCENT = "#742f26";
+const ACCENT = "#b91c1c";
 const LINE = "#e3ddda";
 
 const styles = StyleSheet.create({
