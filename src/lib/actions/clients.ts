@@ -25,10 +25,6 @@ async function requireUserId() {
 }
 
 export async function createClientAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
-  const debugSession = await auth();
-  if (!debugSession?.user?.id) {
-    return { error: `DEBUG: no session found. Raw: ${JSON.stringify(debugSession)}` };
-  }
   const userId = await requireUserId();
 
   const parsed = clientSchema.safeParse({
