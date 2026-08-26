@@ -3,7 +3,15 @@ import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth";
 import { getAccessStatus } from "@/lib/subscription";
 
-const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/reset-password", "/terms", "/privacy"];
+const PUBLIC_PATHS = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/terms",
+  "/privacy",
+  "/admin/login",
+];
 
 // Rutas dentro del área autenticada que deben ser alcanzables aunque la suscripción
 // haya vencido (para poder pagar) o que tienen su propia verificación de acceso (admin).
@@ -24,8 +32,8 @@ export async function proxy(request: NextRequest) {
   const session = await auth();
 
   if (!session?.user) {
-    const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
+    const loginPath = pathname.startsWith("/admin") ? "/admin/login" : "/login";
+    return NextResponse.redirect(new URL(loginPath, request.url));
   }
 
   if (!SUBSCRIPTION_EXEMPT_PATHS.some((p) => pathname.startsWith(p))) {
