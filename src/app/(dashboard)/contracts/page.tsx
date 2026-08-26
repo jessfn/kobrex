@@ -3,6 +3,7 @@ import { Plus, FileText } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Button, Card } from "@/components/ui";
+import { EmptyState } from "@/components/EmptyState";
 import { DeleteContractButton } from "./DeleteContractButton";
 
 export default async function ContractsPage() {
@@ -16,7 +17,12 @@ export default async function ContractsPage() {
   return (
     <div>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Contratos</h1>
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-50 text-amber-600">
+            <FileText size={17} strokeWidth={1.75} />
+          </div>
+          <h1 className="text-2xl font-semibold tracking-tight">Contratos</h1>
+        </div>
         <Link href="/contracts/new">
           <Button>
             <Plus size={15} strokeWidth={2} />
@@ -26,7 +32,14 @@ export default async function ContractsPage() {
       </div>
 
       {contracts.length === 0 ? (
-        <Card className="text-center text-[var(--color-text-muted)]">Aún no tienes contratos.</Card>
+        <EmptyState
+          icon={FileText}
+          tone="amber"
+          title="Aún no tienes contratos"
+          description="Genera un contrato de prestación de servicios con las cláusulas estándar, listo para personalizar y firmar."
+          actionHref="/contracts/new"
+          actionLabel="Crear contrato"
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {contracts.map((c) => (

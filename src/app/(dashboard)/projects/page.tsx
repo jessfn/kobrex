@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, FolderKanban } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Badge, Button, Card } from "@/components/ui";
+import { EmptyState } from "@/components/EmptyState";
 import { DeleteProjectButton } from "./DeleteProjectButton";
 
 const statusTone = {
@@ -30,7 +31,12 @@ export default async function ProjectsPage() {
   return (
     <div>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Proyectos</h1>
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
+            <FolderKanban size={17} strokeWidth={1.75} />
+          </div>
+          <h1 className="text-2xl font-semibold tracking-tight">Proyectos</h1>
+        </div>
         <Link href="/projects/new">
           <Button>
             <Plus size={15} strokeWidth={2} />
@@ -40,7 +46,14 @@ export default async function ProjectsPage() {
       </div>
 
       {projects.length === 0 ? (
-        <Card className="text-center text-[var(--color-text-muted)]">Aún no tienes proyectos.</Card>
+        <EmptyState
+          icon={FolderKanban}
+          tone="violet"
+          title="Aún no tienes proyectos"
+          description="Organiza el trabajo de cada cliente en proyectos para llevar mejor el seguimiento y ligar recibos y contratos."
+          actionHref="/projects/new"
+          actionLabel="Crear proyecto"
+        />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (

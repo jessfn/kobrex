@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Download, Receipt } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { Badge, Button, Card } from "@/components/ui";
+import { Badge, Button } from "@/components/ui";
+import { EmptyState } from "@/components/EmptyState";
 import { invoiceBreakdown, effectiveStatus } from "@/lib/invoice-utils";
 import { InvoiceRowActions } from "./InvoiceRowActions";
 
@@ -20,17 +21,39 @@ export default async function InvoicesPage() {
   return (
     <div>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Recibos</h1>
-        <Link href="/invoices/new">
-          <Button>
-            <Plus size={15} strokeWidth={2} />
-            Nuevo recibo
-          </Button>
-        </Link>
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+            <Receipt size={17} strokeWidth={1.75} />
+          </div>
+          <h1 className="text-2xl font-semibold tracking-tight">Recibos</h1>
+        </div>
+        <div className="flex gap-2">
+          {invoices.length > 0 && (
+            <Link href="/api/invoices/export">
+              <Button variant="ghost">
+                <Download size={15} strokeWidth={2} />
+                Exportar CSV
+              </Button>
+            </Link>
+          )}
+          <Link href="/invoices/new">
+            <Button>
+              <Plus size={15} strokeWidth={2} />
+              Nuevo recibo
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {invoices.length === 0 ? (
-        <Card className="text-center text-[var(--color-text-muted)]">Aún no tienes recibos.</Card>
+        <EmptyState
+          icon={Receipt}
+          tone="emerald"
+          title="Aún no tienes recibos"
+          description="Crea tu primer recibo para empezar a cobrarle a tus clientes con un documento profesional."
+          actionHref="/invoices/new"
+          actionLabel="Crear recibo"
+        />
       ) : (
         <div className="overflow-x-auto rounded-xl border border-[var(--color-border)]">
           <table className="w-full min-w-[640px] border-collapse bg-[var(--color-surface)] text-sm">
