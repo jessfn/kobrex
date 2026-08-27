@@ -87,3 +87,64 @@ export async function sendPasswordResetEmail(params: { to: string; name: string;
     }),
   });
 }
+
+export async function sendWelcomeEmail(params: { to: string; name: string }) {
+  const { to, name } = params;
+
+  const bodyHtml = `
+    <p style="margin:0 0 4px 0; font-size:16px; font-weight:600;">¡Bienvenido a Kobrex, ${name}!</p>
+    <p style="margin:0; color:#6b6360;">
+      Tu cuenta se creó correctamente. Ya puedes empezar a agregar tus clientes, crear recibos y
+      contratos, y llevar el control de tus gastos — todo desde un solo lugar.
+    </p>
+
+    ${emailButton(process.env.NEXT_PUBLIC_APP_URL ?? "https://kobrex.geodatos.com.mx", "Ir a mi panel")}
+
+    <p style="margin:0; color:#6b6360;">
+      Tienes 14 días de prueba gratuita para probar todo sin restricciones. Si tienes dudas, responde
+      este correo.
+    </p>
+  `;
+
+  await getResend().emails.send({
+    from: process.env.EMAIL_FROM ?? "Kobrex <onboarding@resend.dev>",
+    to,
+    subject: "Bienvenido a Kobrex — tu cuenta está lista",
+    html: buildEmailLayout({
+      preheader: "Tu cuenta de Kobrex se creó correctamente.",
+      bodyHtml,
+    }),
+  });
+}
+
+export async function sendVerificationEmail(params: { to: string; name: string; verifyUrl: string }) {
+  const { to, name, verifyUrl } = params;
+
+  const bodyHtml = `
+    <p style="margin:0 0 4px 0; font-size:16px; font-weight:600;">Hola ${name},</p>
+    <p style="margin:0; color:#6b6360;">
+      Confirma que esta es tu dirección de correo para terminar de proteger tu cuenta de Kobrex.
+    </p>
+
+    ${emailButton(verifyUrl, "Verificar mi correo")}
+
+    <p style="margin:0; font-size:12px; color:#6b6360;">
+      Si el botón no funciona, copia y pega este enlace en tu navegador:<br />
+      <a href="${verifyUrl}" style="color:#991b1b; word-break:break-all;">${verifyUrl}</a>
+    </p>
+
+    <p style="margin:20px 0 0 0; color:#6b6360;">
+      Si tú no creaste esta cuenta, puedes ignorar este correo.
+    </p>
+  `;
+
+  await getResend().emails.send({
+    from: process.env.EMAIL_FROM ?? "Kobrex <onboarding@resend.dev>",
+    to,
+    subject: "Verifica tu correo de Kobrex",
+    html: buildEmailLayout({
+      preheader: "Confirma tu correo para terminar de configurar tu cuenta de Kobrex.",
+      bodyHtml,
+    }),
+  });
+}

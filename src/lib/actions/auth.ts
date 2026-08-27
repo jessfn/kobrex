@@ -5,11 +5,15 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { signIn } from "@/lib/auth";
 import { newTrialEndDate } from "@/lib/subscription";
+import { sendWelcomeEmail, sendVerificationEmail } from "@/lib/email/resend";
+import { createVerificationToken, buildVerifyUrl } from "@/lib/verification-token";
 
 const registerSchema = z.object({
   name: z.string().min(2, "El nombre es muy corto"),
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  phoneCountryCode: z.string().min(1, "Selecciona una lada"),
+  phone: z.string().regex(/^\d{10}$/, "El teléfono debe tener exactamente 10 dígitos"),
   acceptedTerms: z.literal("on", { message: "Debes aceptar los Términos y el Aviso de Privacidad" }),
 });
 
@@ -23,6 +27,8 @@ export async function registerAction(
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
+    phoneCountryCode: formData.get("phoneCountryCode"),
+    phone: formData.get("phone"),
     acceptedTerms: formData.get("acceptedTerms"),
   });
 
@@ -30,7 +36,7 @@ export async function registerAction(
     return { error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
   }
 
-  const { name, email, password } = parsed.data;
+  const { name, email, password, phoneCountryCode, phone } = parsed.data;
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
@@ -39,15 +45,23 @@ export async function registerAction(
 
   const passwordHash = await bcrypt.hash(password, 10);
 
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       name,
       email,
       passwordHash,
+      phoneCountryCode,
+      phone,
       acceptedTermsAt: new Date(),
       subscription: { create: { status: "TRIALING", trialEndsAt: newTrialEndDate() } },
     },
   });
+
+  const verifyToken = await createVerificationToken(user.id);
+  await Promise.all([
+    sendWelcomeEmail({ to: user.email, name: user.name }),
+    sendVerificationEmail({ to: user.email, name: user.name, verifyUrl: buildVerifyUrl(verifyToken) }),
+  ]);
 
   await signIn("credentials", { email, password, redirectTo: "/dashboard" });
   return {};

@@ -1,10 +1,11 @@
-import { Wallet, Users, Clock, AlertTriangle, TrendingUp } from "lucide-react";
+import { Wallet, Users, Clock, AlertTriangle, TrendingUp, MailWarning } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Card } from "@/components/ui";
 import { invoiceBreakdown } from "@/lib/invoice-utils";
 import { IncomeChart } from "@/components/charts/IncomeChart";
 import { OnboardingChecklist } from "@/components/OnboardingChecklist";
+import { resendVerificationEmailAction } from "@/lib/actions/verify-email";
 
 const MONTH_LABELS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
@@ -31,7 +32,7 @@ export default async function DashboardPage() {
     overdueInvoices,
     paidLast6Months,
   ] = await Promise.all([
-    prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { businessName: true } }),
+    prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { businessName: true, emailVerified: true } }),
     prisma.client.count({ where: { userId } }),
     prisma.invoice.count({ where: { userId } }),
     prisma.invoice.findMany({
@@ -94,6 +95,23 @@ export default async function DashboardPage() {
   return (
     <div>
       <h1 className="mb-6 text-2xl font-semibold tracking-tight">Panel</h1>
+
+      {!user.emailVerified && (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+          <div className="flex items-center gap-2.5 text-sm text-amber-900">
+            <MailWarning size={17} strokeWidth={1.75} className="shrink-0" />
+            Aún no verificas tu correo. Revisa tu bandeja de entrada.
+          </div>
+          <form action={resendVerificationEmailAction}>
+            <button
+              type="submit"
+              className="text-xs font-semibold text-amber-900 underline underline-offset-2 transition-opacity duration-150 hover:opacity-70"
+            >
+              Reenviar correo
+            </button>
+          </form>
+        </div>
+      )}
 
       <OnboardingChecklist
         steps={[

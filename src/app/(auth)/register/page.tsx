@@ -6,6 +6,7 @@ import { registerAction, type ActionResult } from "@/lib/actions/auth";
 import { Button, Card, ErrorText, Input, Label } from "@/components/ui";
 import { Logo } from "@/components/Logo";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
+import { PhoneFields } from "@/components/PhoneFields";
 
 export default function RegisterPage() {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(registerAction, {});
@@ -41,6 +42,7 @@ export default function RegisterPage() {
               <Label htmlFor="password">Contraseña</Label>
               <Input id="password" name="password" type="password" required placeholder="Mínimo 6 caracteres" />
             </div>
+            <PhoneFields />
             <label className="flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
               <input
                 type="checkbox"

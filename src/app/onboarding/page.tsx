@@ -5,6 +5,7 @@ import Link from "next/link";
 import { completeOnboardingAction, type ActionResult } from "@/lib/actions/onboarding";
 import { Button, Card, ErrorText, Input, Label } from "@/components/ui";
 import { Logo } from "@/components/Logo";
+import { PhoneFields } from "@/components/PhoneFields";
 
 export default function OnboardingPage() {
   const [state, formAction, pending] = useActionState<ActionResult, FormData>(completeOnboardingAction, {});
@@ -26,6 +27,7 @@ export default function OnboardingPage() {
               <Label htmlFor="businessName">Nombre o razón social (opcional)</Label>
               <Input id="businessName" name="businessName" placeholder="Tu nombre completo o el de tu negocio" />
             </div>
+            <PhoneFields />
             <label className="flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
               <input
                 type="checkbox"

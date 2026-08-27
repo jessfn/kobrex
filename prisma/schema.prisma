@@ -48,11 +48,12 @@ model User {
   passwordHash  String?
 
   // Perfil de negocio: usado como emisor en recibos y contratos generados en PDF
-  businessName  String?
-  rfc           String?
-  fiscalAddress String?
-  phone         String?
-  taxRegime     String?
+  businessName    String?
+  rfc             String?
+  fiscalAddress   String?
+  phone           String?
+  phoneCountryCode String?
+  taxRegime       String?
 
   // Rol de dueño de la plataforma (nunca se activa desde la UI pública)
   isOwner       Boolean    @default(false)
